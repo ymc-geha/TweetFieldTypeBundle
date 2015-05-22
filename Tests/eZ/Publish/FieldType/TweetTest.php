@@ -10,12 +10,13 @@ namespace EzSystems\TweetFieldTypeBundle\Tests\eZ\Publish\FieldType;
 use eZ\Publish\Core\FieldType\Tests\FieldTypeTest;
 use EzSystems\TweetFieldTypeBundle\eZ\Publish\FieldType\Tweet\Type as TweetType;
 use EzSystems\TweetFieldTypeBundle\eZ\Publish\FieldType\Tweet\Value as TweetValue;
+use eZ\Publish\Core\FieldType\ValidationError;
 
 class TweetTest extends FieldTypeTest
 {
     protected function createFieldTypeUnderTest()
     {
-        return new TweetType;
+        return new TweetType($this->getMock('EzSystems\TweetFieldTypeBundle\Twitter\TwitterClientInterface'));
     }
 
     protected function getValidatorConfigurationSchemaExpectation()
@@ -151,4 +152,56 @@ class TweetTest extends FieldTypeTest
             )
         );
     }
+
+    protected function provideFieldTypeIdentifier()
+    {
+        return 'eztweet';
+    }
+
+    public function provideDataForGetName()
+    {
+        return array(
+            array( $this->getEmptyValueExpectation(), '' ),
+            array( new TweetValue( 'https://twitter.com/ymc_ch/status/572364727990558720' ), 'ymc_ch-status-572364727990558720' )
+        );
+    }
+
+    public function provideValidDataForValidate()
+    {
+        return array(
+            array(
+                array(
+                    "validatorConfiguration" => array(
+                        "TweetAuthorValidator" => array(
+                            "AuthorList" => ['ymc_ch']
+                        ),
+                    ),
+                ),
+                new TweetValue('https://twitter.com/ymc_ch/status/572364727990558720'),
+            )
+        );
+    }
+    public function provideInvalidDataForValidate()
+    {
+        return array(
+            array(
+                array(
+                    "validatorConfiguration" => array(
+                        "TweetAuthorValidator" => array(
+                            "AuthorList" => ['ymc']
+                        ),
+                    ),
+                ),
+                new TweetValue('https://twitter.com/ymc_ch/status/572364727990558720'),
+                array(
+                    new ValidationError(
+                        "Twitter user %user% is not in the approved author list",
+                        null,
+                        array('ymc_ch')
+                    ),
+           ),
+            )
+        );
+    }
+
 }
