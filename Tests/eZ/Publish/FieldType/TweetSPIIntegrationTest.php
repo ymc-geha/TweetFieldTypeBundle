@@ -14,6 +14,8 @@ use eZ\Publish\Core\FieldType;
 use eZ\Publish\SPI\Persistence\Content;
 use eZ\Publish\SPI\Persistence\Content\Field;
 use eZ\Publish\SPI\Tests\FieldType\BaseIntegrationTest;
+use EzSystems\TweetFieldTypeBundle\eZ\Publish\FieldType\Tweet\LegacyConverter;
+use EzSystems\TweetFieldTypeBundle\eZ\Publish\FieldType\Tweet\Type as TweetType;
 
 /**
  * SPI Integration test for legacy storage field types
@@ -57,35 +59,17 @@ class TweetSPIIntegrationTest extends BaseIntegrationTest
         return 'eztweet';
     }
 
-    /**
-     * Get handler with required custom field types registered
-     *
-     * @return Handler
-     */
     public function getCustomHandler()
     {
-        $handler = $this->getHandler();
-
-        $handler->getFieldTypeRegistry()->register(
+        $fieldType = new TweetType($this->getMock('EzSystems\TweetFieldTypeBundle\Twitter\TwitterClientInterface'));
+        return $this->getHandler(
             'eztweet',
-            new \EzSystems\TweetFieldTypeBundle\eZ\Publish\FieldType\Tweet\Type()
+            $fieldType,
+            new LegacyConverter(),
+            new FieldType\NullStorage()
         );
-        $handler->getStorageRegistry()->register(
-            'eztweet',
-            new \EzSystems\TweetFieldTypeBundle\eZ\Publish\FieldType\Tweet\Storage(
-                array(
-                    'LegacyStorage' => new \EzSystems\TweetFieldTypeBundle\eZ\Publish\FieldType\Tweet\Storage\Gateway\Legacy()
-                ),
-                $this->getTwitterClientMock()
-            )
-        );
-        $handler->getFieldValueConverterRegistry()->register(
-            'eztweet',
-            new \EzSystems\TweetFieldTypeBundle\eZ\Publish\FieldType\Tweet\LegacyConverter()
-        );
-
-        return $handler;
     }
+
 
     /**
      * Returns the FieldTypeConstraints to be used to create a field definition
