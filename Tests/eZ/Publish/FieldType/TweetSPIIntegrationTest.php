@@ -107,10 +107,7 @@ class TweetSPIIntegrationTest extends BaseIntegrationTest
         return new Content\FieldValue(
             array(
                 'data' => 'http://twitter.com/xxx/status/123545',
-                'externalData' => array(
-                    'authorUrl' => 'http://twitter.com/xxx',
-                    'contents' => 'blockQuote'
-                ),
+                'externalData' => null,
                 'sortKey' => 'http://twitter.com/xxx/status/123545',
             )
         );
@@ -151,10 +148,7 @@ class TweetSPIIntegrationTest extends BaseIntegrationTest
         return new Content\FieldValue(
             array(
                 'data' => 'http://twitter.com/yyyyy/status/54321',
-                'externalData' => array(
-                    'authorUrl' => 'http://twitter.com/yyy',
-                    'contents' => '<blockquote />'
-                ),
+                'externalData' => null,
                 'sortKey' => 'http://twitter.com/yyyyy/status/54321',
             )
         );
