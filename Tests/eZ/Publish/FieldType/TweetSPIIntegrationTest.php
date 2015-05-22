@@ -61,7 +61,7 @@ class TweetSPIIntegrationTest extends BaseIntegrationTest
 
     public function getCustomHandler()
     {
-        $fieldType = new TweetType($this->getMock('EzSystems\TweetFieldTypeBundle\Twitter\TwitterClientInterface'));
+        $fieldType = new TweetType($this->getTwitterClientMock());
         return $this->getHandler(
             'eztweet',
             $fieldType,
